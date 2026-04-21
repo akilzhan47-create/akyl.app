@@ -3,24 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>МЕЧТЫ</title>
+  <title>REDMIND</title>
   <style>
-    body { font-family: Arial; margin: 0; background: #0f172a; color: white; }
-    .container { padding: 16px; max-width: 500px; margin: auto; }
-    .card { background: #1e293b; padding: 12px; border-radius: 16px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    button { padding: 8px 12px; border: none; border-radius: 10px; cursor: pointer; margin-top: 5px; }
-    .btn { background: #3b82f6; color: white; }
-    .danger { background: #ef4444; color: white; }
-    input { width: 100%; padding: 10px; margin-top: 6px; border-radius: 10px; border: none; }
-    .progress { height: 6px; background: #334155; border-radius: 10px; overflow: hidden; margin-top: 6px; }
-    .progress-bar { height: 100%; background: #22c55e; }
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #ffffff;
+      color: #111;
+    }
+
+    .container {
+      padding: 16px;
+      max-width: 520px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #7f1d1d; /* бордовый */
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      border: 1px solid #eee;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title {
+      font-weight: 600;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .primary {
+      background: #1e3a8a; /* тёмно-синий */
+      color: white;
+    }
+
+    .danger {
+      background: black;
+      color: white;
+    }
+
+    .ghost {
+      background: #e5e7eb;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .progress {
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .bar {
+      height: 100%;
+      background: #1e3a8a;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    ul {
+      padding-left: 18px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h1>МЕЧТЫ</h1>
+    <h1>REDMIND</h1>
+
     <input id="goalInput" placeholder="Новая цель">
-    <button class="btn" onclick="addGoal()">Добавить цель</button>
+    <button class="primary" onclick="addGoal()">Добавить цель</button>
+
     <div id="goals"></div>
   </div>
 
@@ -34,7 +119,14 @@
     function addGoal() {
       const input = document.getElementById('goalInput');
       if (!input.value) return;
-      goals.push({ title: input.value, steps: [], date: '' });
+
+      goals.push({
+        title: input.value,
+        steps: [],
+        date: '',
+        open: false
+      });
+
       input.value = '';
       save();
       render();
@@ -46,10 +138,21 @@
       render();
     }
 
+    function toggleOpen(i) {
+      goals[i].open = !goals[i].open;
+      save();
+      render();
+    }
+
     function addStep(i) {
       const step = prompt('Шаг:');
       if (!step) return;
-      goals[i].steps.push({ text: step, done: false });
+
+      goals[i].steps.push({
+        text: step,
+        done: false
+      });
+
       save();
       render();
     }
@@ -63,6 +166,7 @@
     function setDate(i) {
       const date = prompt('Введите дедлайн (например 2026-05-01):');
       if (!date) return;
+
       goals[i].date = date;
       save();
       render();
@@ -74,33 +178,53 @@
 
       goals.forEach((goal, i) => {
         const done = goal.steps.filter(s => s.done).length;
-        const percent = goal.steps.length ? Math.round(done / goal.steps.length * 100) : 0;
+        const percent = goal.steps.length
+          ? Math.round(done / goal.steps.length * 100)
+          : 0;
 
         const div = document.createElement('div');
         div.className = 'card';
+
         div.innerHTML = `
-          <h3>${goal.title}</h3>
-          <p>Дедлайн: ${goal.date || 'не задан'}</p>
-          <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
-          <p>${percent}%</p>
-          <button class="btn" onclick="addStep(${i})">+ шаг</button>
-          <button onclick="setDate(${i})">📅 дедлайн</button>
-          <button class="danger" onclick="deleteGoal(${i})">Удалить</button>
-          <ul>
-            ${goal.steps.map((s, j) => `
-              <li>
-                <input type="checkbox" ${s.done ? 'checked' : ''} onclick="toggleStep(${i}, ${j})">
-                ${s.text}
-              </li>
-            `).join('')}
-          </ul>
+          <div class="row">
+            <div class="title">${goal.title}</div>
+            <button class="ghost" onclick="toggleOpen(${i})">
+              ${goal.open ? 'Скрыть' : 'Открыть'}
+            </button>
+          </div>
+
+          <div class="${goal.open ? '' : 'hidden'}">
+            <p>Дедлайн: ${goal.date || 'не задан'}</p>
+
+            <div class="progress">
+              <div class="bar" style="width:${percent}%"></div>
+            </div>
+
+            <p>${percent}%</p>
+
+            <button class="primary" onclick="addStep(${i})">+ шаг</button>
+            <button class="ghost" onclick="setDate(${i})">📅 дедлайн</button>
+            <button class="danger" onclick="deleteGoal(${i})">Удалить</button>
+
+            <ul>
+              ${goal.steps.map((s, j) => `
+                <li>
+                  <input type="checkbox"
+                    ${s.done ? 'checked' : ''}
+                    onclick="toggleStep(${i}, ${j})">
+                  ${s.text}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
         `;
+
         container.appendChild(div);
       });
     }
 
     render();
   </script>
+
 </body>
-</html>
 </html>
