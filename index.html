@@ -4,26 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>REDMIND</title>
+
+  <!-- Шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: Arial;
       margin: 0;
-      background: #ffffff;
+      background: #fff;
+      font-family: Arial;
       color: #111;
     }
 
     .container {
       padding: 16px;
+      padding-bottom: 80px;
       max-width: 520px;
       margin: auto;
     }
 
-    h1 {
+    /* HEADER */
+    .header {
       text-align: center;
-      color: #7f1d1d; /* бордовый */
-      margin-bottom: 12px;
+      position: relative;
+      margin-bottom: 10px;
     }
 
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: #7f1d1d;
+    }
+
+    .by {
+      position: absolute;
+      right: 0;
+      top: 10px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* CARDS */
     .card {
       background: #f9fafb;
       padding: 12px;
@@ -35,39 +56,35 @@
     .row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-    }
-
-    .title {
-      font-weight: 600;
-    }
-
-    button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 5px;
     }
 
     .primary {
-      background: #1e3a8a; /* тёмно-синий */
+      background: #1e3a8a;
       color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
     }
 
     .danger {
       background: black;
       color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
     }
 
     .ghost {
       background: #e5e7eb;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
     }
 
     input {
       width: 100%;
       padding: 10px;
-      margin: 6px 0 10px;
+      margin: 6px 0;
       border-radius: 10px;
       border: 1px solid #e5e7eb;
     }
@@ -76,8 +93,6 @@
       height: 6px;
       background: #e5e7eb;
       border-radius: 10px;
-      overflow: hidden;
-      margin-top: 6px;
     }
 
     .bar {
@@ -85,146 +100,175 @@
       background: #1e3a8a;
     }
 
-    .hidden {
-      display: none;
+    .hidden { display: none; }
+
+    /* NAVBAR */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 520px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: space-around;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 0;
     }
 
-    ul {
-      padding-left: 18px;
-    }
-
-    li {
-      margin: 6px 0;
+    .nav div {
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <h1>REDMIND</h1>
+<div class="container">
 
+  <div class="header">
+    <div class="logo">REDMIND</div>
+    <div class="by">by Akylzhan</div>
+  </div>
+
+  <!-- ГЛАВНАЯ -->
+  <div id="home">
     <input id="goalInput" placeholder="Новая цель">
     <button class="primary" onclick="addGoal()">Добавить цель</button>
-
     <div id="goals"></div>
   </div>
 
-  <script>
-    let goals = JSON.parse(localStorage.getItem('goals')) || [];
+  <!-- ПРОГРЕСС -->
+  <div id="progress" class="hidden">
+    <h3>Прогресс</h3>
+    <p>Здесь будет аналитика:</p>
+    <ul>
+      <li>За неделю</li>
+      <li>За месяц</li>
+      <li>За год</li>
+    </ul>
+  </div>
 
-    function save() {
-      localStorage.setItem('goals', JSON.stringify(goals));
-    }
+  <!-- АККАУНТ -->
+  <div id="account" class="hidden">
+    <h3>Аккаунт</h3>
+    <input placeholder="Имя">
+    <input placeholder="Род деятельности">
+    <input placeholder="Семейное положение">
+  </div>
 
-    function addGoal() {
-      const input = document.getElementById('goalInput');
-      if (!input.value) return;
+</div>
 
-      goals.push({
-        title: input.value,
-        steps: [],
-        date: '',
-        open: false
-      });
+<!-- НАВИГАЦИЯ -->
+<div class="nav">
+  <div onclick="show('home')">⚡<br>Главная</div>
+  <div onclick="show('progress')">🚀<br>Прогресс</div>
+  <div onclick="show('account')">👤<br>Аккаунт</div>
+</div>
 
-      input.value = '';
-      save();
-      render();
-    }
+<script>
+let goals = JSON.parse(localStorage.getItem('goals')) || [];
 
-    function deleteGoal(i) {
-      goals.splice(i, 1);
-      save();
-      render();
-    }
+function save() {
+  localStorage.setItem('goals', JSON.stringify(goals));
+}
 
-    function toggleOpen(i) {
-      goals[i].open = !goals[i].open;
-      save();
-      render();
-    }
+function show(screen) {
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('progress').classList.add('hidden');
+  document.getElementById('account').classList.add('hidden');
 
-    function addStep(i) {
-      const step = prompt('Шаг:');
-      if (!step) return;
+  document.getElementById(screen).classList.remove('hidden');
+}
 
-      goals[i].steps.push({
-        text: step,
-        done: false
-      });
+function addGoal() {
+  const input = document.getElementById('goalInput');
+  if (!input.value) return;
 
-      save();
-      render();
-    }
+  goals.push({ title: input.value, steps: [], open: false });
+  input.value = '';
+  save();
+  render();
+}
 
-    function toggleStep(i, j) {
-      goals[i].steps[j].done = !goals[i].steps[j].done;
-      save();
-      render();
-    }
+function toggleOpen(i) {
+  goals[i].open = !goals[i].open;
+  save();
+  render();
+}
 
-    function setDate(i) {
-      const date = prompt('Введите дедлайн (например 2026-05-01):');
-      if (!date) return;
+function addStep(i) {
+  const step = prompt('Шаг:');
+  if (!step) return;
 
-      goals[i].date = date;
-      save();
-      render();
-    }
+  goals[i].steps.push({ text: step, done: false });
+  save();
+  render();
+}
 
-    function render() {
-      const container = document.getElementById('goals');
-      container.innerHTML = '';
+function toggleStep(i, j) {
+  goals[i].steps[j].done = !goals[i].steps[j].done;
+  save();
+  render();
+}
 
-      goals.forEach((goal, i) => {
-        const done = goal.steps.filter(s => s.done).length;
-        const percent = goal.steps.length
-          ? Math.round(done / goal.steps.length * 100)
-          : 0;
+function deleteGoal(i) {
+  goals.splice(i, 1);
+  save();
+  render();
+}
 
-        const div = document.createElement('div');
-        div.className = 'card';
+function render() {
+  const container = document.getElementById('goals');
+  container.innerHTML = '';
 
-        div.innerHTML = `
-          <div class="row">
-            <div class="title">${goal.title}</div>
-            <button class="ghost" onclick="toggleOpen(${i})">
-              ${goal.open ? 'Скрыть' : 'Открыть'}
-            </button>
-          </div>
+  goals.forEach((g, i) => {
+    const done = g.steps.filter(s => s.done).length;
+    const pct = g.steps.length ? Math.round(done / g.steps.length * 100) : 0;
 
-          <div class="${goal.open ? '' : 'hidden'}">
-            <p>Дедлайн: ${goal.date || 'не задан'}</p>
+    const div = document.createElement('div');
+    div.className = 'card';
 
-            <div class="progress">
-              <div class="bar" style="width:${percent}%"></div>
-            </div>
+    div.innerHTML = `
+      <div class="row">
+        <b>${g.title}</b>
+        <button class="ghost" onclick="toggleOpen(${i})">
+          ${g.open ? 'Скрыть' : 'Открыть'}
+        </button>
+      </div>
 
-            <p>${percent}%</p>
+      <div class="${g.open ? '' : 'hidden'}">
+        <div class="progress">
+          <div class="bar" style="width:${pct}%"></div>
+        </div>
 
-            <button class="primary" onclick="addStep(${i})">+ шаг</button>
-            <button class="ghost" onclick="setDate(${i})">📅 дедлайн</button>
-            <button class="danger" onclick="deleteGoal(${i})">Удалить</button>
+        <p>${pct}%</p>
 
-            <ul>
-              ${goal.steps.map((s, j) => `
-                <li>
-                  <input type="checkbox"
-                    ${s.done ? 'checked' : ''}
-                    onclick="toggleStep(${i}, ${j})">
-                  ${s.text}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
+        <button class="primary" onclick="addStep(${i})">+ шаг</button>
+        <button class="danger" onclick="deleteGoal(${i})">Удалить</button>
 
-        container.appendChild(div);
-      });
-    }
+        <ul>
+          ${g.steps.map((s, j) => `
+            <li>
+              <input type="checkbox"
+                ${s.done ? 'checked' : ''}
+                onclick="toggleStep(${i}, ${j})">
+              ${s.text}
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
 
-    render();
-  </script>
+    container.appendChild(div);
+  });
+}
+
+render();
+</script>
 
 </body>
 </html>
