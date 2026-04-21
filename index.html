@@ -5,123 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>REDMIND</title>
 
-  <!-- Шрифт -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: Arial;
-      color: #111;
-    }
+    body { margin:0; background:#fff; font-family:Arial; }
 
-    .container {
-      padding: 16px;
-      padding-bottom: 80px;
-      max-width: 520px;
-      margin: auto;
-    }
+    .container { padding:16px; padding-bottom:80px; max-width:520px; margin:auto; }
 
-    /* HEADER */
-    .header {
-      text-align: center;
-      position: relative;
-      margin-bottom: 10px;
-    }
+    .header { text-align:center; position:relative; }
+    .logo { font-family:'Bebas Neue'; font-size:70px; letter-spacing:4px; color:#7f1d1d; }
+    .by { position:absolute; right:0; top:25px; font-size:12px; }
 
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 40px;
-      color: #7f1d1d;
-    }
+    .card { background:#f9fafb; padding:12px; border-radius:14px; margin-bottom:10px; border:1px solid #eee; }
+    .row { display:flex; justify-content:space-between; }
 
-    .by {
-      position: absolute;
-      right: 0;
-      top: 10px;
-      font-size: 12px;
-      color: #555;
-    }
+    button { padding:8px 12px; border:none; border-radius:10px; }
+    .primary { background:#1e3a8a; color:#fff; }
+    .danger { background:#000; color:#fff; }
+    .ghost { background:#e5e7eb; }
 
-    /* CARDS */
-    .card {
-      background: #f9fafb;
-      padding: 12px;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
-    }
+    input, textarea { width:100%; padding:10px; margin:6px 0; border-radius:10px; border:1px solid #e5e7eb; }
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-    }
+    .progress { height:6px; background:#e5e7eb; border-radius:10px; }
+    .bar { height:100%; background:#1e3a8a; }
 
-    .primary {
-      background: #1e3a8a;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 10px;
-    }
+    .hidden { display:none; }
 
-    .danger {
-      background: black;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 10px;
-    }
-
-    .ghost {
-      background: #e5e7eb;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 10px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .progress {
-      height: 6px;
-      background: #e5e7eb;
-      border-radius: 10px;
-    }
-
-    .bar {
-      height: 100%;
-      background: #1e3a8a;
-    }
-
-    .hidden { display: none; }
-
-    /* NAVBAR */
     .nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 520px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: space-around;
-      background: #fff;
-      border-top: 1px solid #eee;
-      padding: 10px 0;
+      position:fixed; bottom:0; width:100%; max-width:520px;
+      left:50%; transform:translateX(-50%);
+      display:flex; justify-content:space-around;
+      background:#fff; border-top:1px solid #eee;
+      padding:10px 0;
     }
 
-    .nav div {
-      text-align: center;
-      font-size: 12px;
-      cursor: pointer;
-    }
+    .avatar { width:80px; height:80px; border-radius:50%; object-fit:cover; }
+
+    .quoteBox { text-align:center; padding:40px 10px; }
+    .quote { font-size:18px; margin-bottom:20px; }
   </style>
 </head>
 
@@ -134,8 +55,17 @@
     <div class="by">by Akylzhan</div>
   </div>
 
+  <!-- ЦИТАТА -->
+  <div id="quoteScreen">
+    <div class="quoteBox">
+      <div class="quote">"Дисциплина — это мост между целями и результатами."</div>
+      <textarea id="reflection" placeholder="Напиши 2-3 предложения..."></textarea>
+      <button class="primary" onclick="enterApp()">Войти</button>
+    </div>
+  </div>
+
   <!-- ГЛАВНАЯ -->
-  <div id="home">
+  <div id="home" class="hidden">
     <input id="goalInput" placeholder="Новая цель">
     <button class="primary" onclick="addGoal()">Добавить цель</button>
     <div id="goals"></div>
@@ -144,17 +74,16 @@
   <!-- ПРОГРЕСС -->
   <div id="progress" class="hidden">
     <h3>Прогресс</h3>
-    <p>Здесь будет аналитика:</p>
-    <ul>
-      <li>За неделю</li>
-      <li>За месяц</li>
-      <li>За год</li>
-    </ul>
+    <p>Тут будет аналитика (неделя / месяц / год)</p>
   </div>
 
   <!-- АККАУНТ -->
   <div id="account" class="hidden">
     <h3>Аккаунт</h3>
+
+    <img id="avatarPreview" class="avatar">
+    <input type="file" accept="image/*" onchange="uploadAvatar(event)">
+
     <input placeholder="Имя">
     <input placeholder="Род деятельности">
     <input placeholder="Семейное положение">
@@ -162,7 +91,6 @@
 
 </div>
 
-<!-- НАВИГАЦИЯ -->
 <div class="nav">
   <div onclick="show('home')">⚡<br>Главная</div>
   <div onclick="show('progress')">🚀<br>Прогресс</div>
@@ -171,66 +99,98 @@
 
 <script>
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
+let reflections = JSON.parse(localStorage.getItem('reflections')) || [];
 
-function save() {
+function save(){
   localStorage.setItem('goals', JSON.stringify(goals));
+  localStorage.setItem('reflections', JSON.stringify(reflections));
 }
 
-function show(screen) {
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('progress').classList.add('hidden');
-  document.getElementById('account').classList.add('hidden');
+function enterApp(){
+  const text = document.getElementById('reflection').value;
+  if(text.length < 10){
+    alert('Напиши минимум 2 предложения');
+    return;
+  }
 
+  reflections.push({ text, date: new Date().toLocaleDateString() });
+  save();
+
+  document.getElementById('quoteScreen').classList.add('hidden');
+  document.getElementById('home').classList.remove('hidden');
+}
+
+function show(screen){
+  ['home','progress','account'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
   document.getElementById(screen).classList.remove('hidden');
 }
 
-function addGoal() {
+function addGoal(){
   const input = document.getElementById('goalInput');
-  if (!input.value) return;
+  if(!input.value) return;
 
-  goals.push({ title: input.value, steps: [], open: false });
-  input.value = '';
+  goals.push({ title:input.value, steps:[], open:false });
+  input.value='';
   save();
   render();
 }
 
-function toggleOpen(i) {
-  goals[i].open = !goals[i].open;
+function toggleOpen(i){
+  goals[i].open=!goals[i].open;
   save();
   render();
 }
 
-function addStep(i) {
+function addStep(i){
   const step = prompt('Шаг:');
-  if (!step) return;
+  if(!step) return;
 
-  goals[i].steps.push({ text: step, done: false });
+  goals[i].steps.push({ text:step, done:false });
   save();
   render();
 }
 
-function toggleStep(i, j) {
-  goals[i].steps[j].done = !goals[i].steps[j].done;
+function toggleStep(i,j){
+  goals[i].steps[j].done=!goals[i].steps[j].done;
   save();
   render();
 }
 
-function deleteGoal(i) {
-  goals.splice(i, 1);
+function deleteGoal(i){
+  goals.splice(i,1);
   save();
   render();
 }
 
-function render() {
-  const container = document.getElementById('goals');
-  container.innerHTML = '';
+function uploadAvatar(e){
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function(){
+    localStorage.setItem('avatar', reader.result);
+    document.getElementById('avatarPreview').src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-  goals.forEach((g, i) => {
-    const done = g.steps.filter(s => s.done).length;
-    const pct = g.steps.length ? Math.round(done / g.steps.length * 100) : 0;
+function loadAvatar(){
+  const img = localStorage.getItem('avatar');
+  if(img){
+    document.getElementById('avatarPreview').src = img;
+  }
+}
+
+function render(){
+  const c = document.getElementById('goals');
+  c.innerHTML='';
+
+  goals.forEach((g,i)=>{
+    const done = g.steps.filter(s=>s.done).length;
+    const pct = g.steps.length ? Math.round(done/g.steps.length*100) : 0;
 
     const div = document.createElement('div');
-    div.className = 'card';
+    div.className='card';
 
     div.innerHTML = `
       <div class="row">
@@ -251,11 +211,11 @@ function render() {
         <button class="danger" onclick="deleteGoal(${i})">Удалить</button>
 
         <ul>
-          ${g.steps.map((s, j) => `
+          ${g.steps.map((s,j)=>`
             <li>
               <input type="checkbox"
                 ${s.done ? 'checked' : ''}
-                onclick="toggleStep(${i}, ${j})">
+                onclick="toggleStep(${i},${j})">
               ${s.text}
             </li>
           `).join('')}
@@ -263,10 +223,11 @@ function render() {
       </div>
     `;
 
-    container.appendChild(div);
+    c.appendChild(div);
   });
 }
 
+loadAvatar();
 render();
 </script>
 
