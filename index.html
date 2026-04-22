@@ -1,62 +1,124 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REDMIND</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REDMIND</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
-  <style>
-    body { margin:0; background:#fff; font-family:Arial; }
+<style>
+body { margin:0; background:#fff; font-family:Arial; }
 
-    .container { padding:16px; padding-bottom:80px; max-width:520px; margin:auto; }
+.container { padding:16px; padding-bottom:80px; max-width:520px; margin:auto; }
 
-    .logo { font-family:'Bebas Neue'; font-size:70px; text-align:center; color:#7f1d1d; }
+.logo {
+  font-family:'Bebas Neue';
+  font-size:70px;
+  text-align:center;
+  color:#7f1d1d;
+}
 
-    .card { background:#f9fafb; padding:12px; border-radius:14px; margin-bottom:10px; border:1px solid #eee; }
+.card {
+  background:#f9fafb;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:10px;
+  border:1px solid #eee;
+}
 
-    .row { display:flex; justify-content:space-between; }
+.row { display:flex; justify-content:space-between; }
 
-    button { padding:8px 12px; border:none; border-radius:10px; }
-    .primary { background:#1e3a8a; color:#fff; }
-    .danger { background:#000; color:#fff; }
-    .ghost { background:#e5e7eb; }
+button { padding:8px 12px; border:none; border-radius:10px; }
+.primary { background:#1e3a8a; color:#fff; }
+.danger { background:#000; color:#fff; }
+.ghost { background:#e5e7eb; }
 
-    input, textarea { width:100%; padding:10px; margin:6px 0; border-radius:10px; border:1px solid #e5e7eb; }
+input, textarea {
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+}
 
-    .hidden { display:none; }
-  </style>
+.hidden { display:none; }
+
+.nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  max-width:520px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  justify-content:space-around;
+  background:#fff;
+  border-top:1px solid #eee;
+  padding:10px 0;
+}
+
+.avatar {
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  object-fit:cover;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="logo">REDMIND</div>
+<div class="logo">REDMIND</div>
 
-  <!-- РЕФЛЕКСИЯ -->
-  <div id="quoteScreen">
-    <p>"Дисциплина — это мост между целями и результатами."</p>
-    <textarea id="reflection" placeholder="Напиши мысли..."></textarea>
-    <button class="primary" onclick="enterApp()">Войти</button>
-  </div>
+<!-- РЕФЛЕКСИЯ -->
+<div id="quoteScreen">
+  <p>"Дисциплина — это мост между целями и результатами."</p>
+  <textarea id="reflection" placeholder="Напиши мысли..."></textarea>
+  <button class="primary" onclick="enterApp()">Войти</button>
+</div>
 
-  <!-- ГЛАВНАЯ -->
-  <div id="home" class="hidden">
-    <input id="goalInput" placeholder="Название ивента">
-    <input id="rewardInput" placeholder="Награда (что получишь)">
-    <button class="primary" onclick="addGoal()">Добавить ивент</button>
+<!-- ГЛАВНАЯ -->
+<div id="home" class="hidden">
+  <input id="goalInput" placeholder="Название ивента">
+  <input id="rewardInput" placeholder="Награда">
+  <button class="primary" onclick="addGoal()">Добавить</button>
 
-    <div id="goals"></div>
-  </div>
+  <div id="goals"></div>
+</div>
 
-  <!-- АРХИВ -->
-  <div id="archive" class="hidden">
-    <h3>Архив</h3>
-    <div id="archiveList"></div>
-  </div>
+<!-- ПРОГРЕСС -->
+<div id="progress" class="hidden">
+  <h3>Прогресс</h3>
+  <p>Скоро будет аналитика (неделя / месяц / год)</p>
+</div>
 
+<!-- АККАУНТ -->
+<div id="account" class="hidden">
+  <h3>Аккаунт</h3>
+
+  <img id="avatarPreview" class="avatar">
+  <input type="file" accept="image/*" onchange="uploadAvatar(event)">
+
+  <input placeholder="Имя">
+  <input placeholder="Деятельность">
+</div>
+
+<!-- АРХИВ -->
+<div id="archive" class="hidden">
+  <h3>Архив</h3>
+  <div id="archiveList"></div>
+</div>
+
+</div>
+
+<!-- НАВИГАЦИЯ -->
+<div class="nav">
+  <div onclick="show('home')">⚡<br>Главная</div>
+  <div onclick="show('progress')">🚀<br>Прогресс</div>
+  <div onclick="show('account')">👤<br>Аккаунт</div>
 </div>
 
 <script>
@@ -78,18 +140,19 @@ function enterApp(){
   document.getElementById('home').classList.remove('hidden');
 }
 
+function show(screen){
+  ['home','progress','account','archive'].forEach(id=>{
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById(screen).classList.remove('hidden');
+}
+
 function addGoal(){
   const title = document.getElementById('goalInput').value;
   const reward = document.getElementById('rewardInput').value;
-
   if(!title) return;
 
-  goals.push({
-    title,
-    reward,
-    steps: [],
-    open: false
-  });
+  goals.push({ title, reward, steps:[], open:false });
 
   document.getElementById('goalInput').value='';
   document.getElementById('rewardInput').value='';
@@ -120,7 +183,7 @@ function toggleStep(i,j){
 }
 
 function deleteGoal(i){
-  const reason = prompt('Почему удаляешь цель?');
+  const reason = prompt('Почему удаляешь?');
   if(!reason) return;
 
   archive.push({
@@ -133,6 +196,23 @@ function deleteGoal(i){
   save();
   render();
   renderArchive();
+}
+
+function uploadAvatar(e){
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(){
+    localStorage.setItem('avatar', reader.result);
+    document.getElementById('avatarPreview').src = reader.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function loadAvatar(){
+  const img = localStorage.getItem('avatar');
+  if(img) document.getElementById('avatarPreview').src = img;
 }
 
 function render(){
@@ -161,8 +241,8 @@ function render(){
           ${g.steps.map((s,j)=>`
             <li>
               <input type="checkbox"
-                ${s.done ? 'checked' : ''}
-                onclick="toggleStep(${i},${j})">
+              ${s.done ? 'checked' : ''}
+              onclick="toggleStep(${i},${j})">
               ${s.text}
             </li>
           `).join('')}
@@ -194,6 +274,7 @@ function renderArchive(){
   });
 }
 
+loadAvatar();
 render();
 renderArchive();
 </script>
